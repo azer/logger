@@ -18,18 +18,21 @@ First create an instance with a preferred name;
 import "github.com/azer/logger"
 
 var log = logger.New("example-app")
+```
 
-func main () {
-  port := 8080
-  log.Info("Running at %d", port)
+It gives only two methods; Info and Error.
 
-  err := DoSomething()
+```go
+log.Info("Running at %d", 8080)
 
-  if err != nil {
-    log.Error("Failed: %s", err.Error())
-  }
+err := DoSomething()
+
+if err != nil {
+  log.Error("Failed: %s", err.Error())
 }
 ```
+
+Check out [example/simple.go](https://github.com/azer/logger/blob/master/example/simple.go) for a more detailed example.
 
 ### Filtering
 
