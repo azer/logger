@@ -20,7 +20,7 @@ import "github.com/azer/logger"
 var log = logger.New("example-app")
 ```
 
-It gives only two methods; Info and Error.
+It gives only two methods; `Info`, `Timer` and `Error`.
 
 ```go
 log.Info("Running at %d", 8080)
@@ -55,6 +55,21 @@ You can filter logs by their level, too. If `INFO` level is not useful for your 
 ```bash
 $ LOG=images,users LOG_LEVEL=error go run example-app.go
 ```
+
+### Timers
+
+You can use timer logs for measuring your program. For example;
+
+```go
+timer := log.Timer()
+
+image, err := PullImage("http://foo.com/bar.jpg")
+
+timer.End("Fetched foo.com/bar.jpg")
+```
+
+Timer log lines will be outputting the elapsed time in time.Duration in a normal terminal, or in int64 format when your program is running on a non-terminal environment.
+See below documentation for more info.
 
 ### Structured Output
 
