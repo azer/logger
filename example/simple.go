@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// Assume that all these loggers below are defined in separate package
 var app = logger.New("app")
 var images = logger.New("images")
 var socket = logger.New("websocket")
