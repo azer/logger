@@ -6,12 +6,12 @@ import (
 )
 
 var (
-	out = os.Stderr
-	verbosity = Verbosity()
+	out                 = os.Stderr
+	verbosity           = Verbosity()
 	enabled, allEnabled = Enabled()
 )
 
-func Enabled () (map[string]bool, bool) {
+func Enabled() (map[string]bool, bool) {
 	val := os.Getenv("LOG")
 
 	if val == "*" {
@@ -28,7 +28,7 @@ func Enabled () (map[string]bool, bool) {
 	return all, false
 }
 
-func IsEnabled (name string) bool {
+func IsEnabled(name string) bool {
 	if allEnabled {
 		return true
 	}
@@ -37,7 +37,7 @@ func IsEnabled (name string) bool {
 	return ok
 }
 
-func Verbosity () int {
+func Verbosity() int {
 	level := os.Getenv("LOG_LEVEL")
 
 	if strings.ToUpper(level) == "TIMER" {

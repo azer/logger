@@ -1,19 +1,18 @@
 package main
 
 import (
-	"github.com/azer/logger"
 	"errors"
+	"github.com/azer/logger"
 	"time"
 )
 
-// Assume that all these loggers below are defined in separate package
 var app = logger.New("app")
 var images = logger.New("images")
 var socket = logger.New("websocket")
 var users = logger.New("users")
 var db = logger.New("database")
 
-func main () {
+func main() {
 	app.Info("Starting at %d", 9088)
 	db.Info("Connecting to mysql://azer@localhost:9900/foobar")
 
@@ -33,5 +32,5 @@ func main () {
 
 	time.Sleep(time.Millisecond * 250)
 
-	app.Error("Failed to start, shutting down...")
+	app.Error("Failed to start, shutting down...\n\n\n")
 }

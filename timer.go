@@ -1,25 +1,25 @@
 package logger
 
 import (
-	"time"
 	"fmt"
+	"time"
 )
 
 type Timer struct {
-	Logger *Logger
-	Start int64
+	Logger    *Logger
+	Start     int64
 	IsEnabled bool
 }
 
-func (t *Timer) End (format string, v... interface{}) {
+func (t *Timer) End(format string, v ...interface{}) {
 	if !t.IsEnabled {
 		return
 	}
 
-	t.Logger.Write(t.Format(Now() - t.Start, fmt.Sprintf(format, v...)))
+	t.Logger.Write(t.Format(Now()-t.Start, fmt.Sprintf(format, v...)))
 }
 
-func (t *Timer) Format (elapsed int64, msg string) string {
+func (t *Timer) Format(elapsed int64, msg string) string {
 	now := time.Now()
 
 	if !colorEnabled {
