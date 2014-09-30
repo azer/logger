@@ -2,7 +2,7 @@
 
 Minimalistic logging library for Go.
 
-![](https://i.cloudup.com/v2nIf6xO2x.png)
+![](https://i.cloudup.com/rUyno2tHCx.png)
 
 ## Install
 
