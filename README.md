@@ -78,7 +78,8 @@ When your app isn't running on a terminal, it'll change the output format into:
 ```
 time="2014-09-29 23:51:59.690196205 -0700 PDT" package="app" level="INFO" msg="Starting at 9088"
 time="2014-09-29 23:51:59.690302069 -0700 PDT" package="database" level="INFO" msg="Connecting to mysql://azer@localhost:9900/foobar"
-time="2014-09-29 23:51:59.690315471 -0700 PDT" package="images" level="INFO" msg="Requesting an image at /foo/bar.jpg"
+time="2014-09-29 23:51:59.690315471 -0700 PDT" package="images" level="INFO" msg="Requesting an image at foo/bar.jpg"
+time="2014-09-30 13:12:58.20827907 -0700 PDT" package="images" level="TIMER" elapsed="250444460" msg="Fetched foo/bar.jpg"
 time="2014-09-29 23:51:59.940415043 -0700 PDT" package="database" level="ERROR" msg="Fatal connection error."
 time="2014-09-29 23:51:59.940454957 -0700 PDT" package="users" level="INFO" msg="John just logged  from Istanbul"
 time="2014-09-29 23:51:59.94046777 -0700 PDT" package="websocket" level="INFO" msg="Connecting..."
