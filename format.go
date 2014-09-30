@@ -7,7 +7,7 @@ import (
 	"syscall"
 )
 
-var colorEnabled = isterminal.IsTerminal(syscall.Stdout)
+var colorEnabled = isterminal.IsTerminal(syscall.Stderr)
 
 var (
 	colorIndex = 0
