@@ -17,8 +17,10 @@ func main () {
 	app.Info("Starting at %d", 9088)
 	db.Info("Connecting to mysql://azer@localhost:9900/foobar")
 
-	images.Info("Requesting an image at /foo/bar.jpg")
+	images.Info("Requesting an image at foo/bar.jpg")
+	timer := images.Timer()
 	time.Sleep(time.Millisecond * 250)
+	timer.End("Fetched foo/bar.jpg")
 
 	db.Error("Fatal connection error.")
 

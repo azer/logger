@@ -40,8 +40,12 @@ func IsEnabled (name string) bool {
 func Verbosity () int {
 	level := os.Getenv("LOG_LEVEL")
 
-	if strings.ToUpper(level) == "ERROR" {
+	if strings.ToUpper(level) == "TIMER" {
 		return 2
+	}
+
+	if strings.ToUpper(level) == "ERROR" {
+		return 3
 	}
 
 	return 1

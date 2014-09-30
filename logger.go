@@ -30,14 +30,26 @@ func (l *Logger) Info (format string, v ...interface{}) {
 	l.Output(1,"INFO", fmt.Sprintf(format, v...))
 }
 
+func (l *Logger) Timer () *Timer {
+	return &Timer{
+		Logger: l,
+		Start: Now(),
+		IsEnabled: l.IsEnabled && verbosity < 3,
+	}
+}
+
 func (l *Logger) Error (format string, v ...interface{}) {
 	if !l.IsEnabled {
 		return
 	}
 
-	l.Output(2, "ERROR", fmt.Sprintf(format, v...))
+	l.Output(3, "ERROR", fmt.Sprintf(format, v...))
 }
 
 func (l *Logger) Output (verbosity int, sort string, msg string) {
-	fmt.Fprintln(out, l.Format(verbosity, sort, msg))
+	l.Write(l.Format(verbosity, sort, msg))
+}
+
+func (l *Logger) Write (log string) {
+	fmt.Fprintln(out, log)
 }

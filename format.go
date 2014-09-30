@@ -16,6 +16,7 @@ var (
 	reset = "\033[0m"
 	bold = "\033[1m"
 	red = "\033[31m"
+	cyan = "\033[36m"
 	colors = []string{
 		"\033[34m", // blue
 		"\033[32m", // green
@@ -34,7 +35,7 @@ func (l *Logger) Format (verbosity int, sort string, msg string) string {
 
 	tf := t.Format("01.02.06 15:04:05.000")
 
-	if verbosity == 2 {
+	if verbosity == 3 {
 		return fmt.Sprintf("%s%s %s%s%s(%s!%s)%s:%s %s", grey, tf, l.Color, l.Name, grey, red, grey, l.Color, reset, msg)
 	}
 
