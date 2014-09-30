@@ -31,6 +31,8 @@ func main () {
 }
 ```
 
+### Filtering
+
 By default, it won't output. Enable it with `LOG` environment variable:
 
 ```bash
@@ -43,11 +45,15 @@ This will enable all logs. You can choose the packages that you'd like to displa
 $ LOG=images,users go run example-app.go
 ```
 
-If `INFO` level is not useful for your case, pass `LOG_LEVEL`:
+In the above example, you'll only see logs from `images` and `users` packages.
+
+You can filter logs by their level, too. If `INFO` level is not useful for your case, pass `LOG_LEVEL`:
 
 ```bash
-$ LOG=* LOG_LEVEL=error go run example-app.go
+$ LOG=images,users LOG_LEVEL=error go run example-app.go
 ```
+
+### Structured Output
 
 When your app isn't running on a terminal, it'll change the output format into:
 
