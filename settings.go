@@ -50,3 +50,8 @@ func Verbosity() int {
 
 	return 1
 }
+
+func SetOutput(w *os.File) {
+	colorEnabled = false
+	out = w
+}

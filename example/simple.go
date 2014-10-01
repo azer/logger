@@ -32,5 +32,5 @@ func main() {
 
 	time.Sleep(time.Millisecond * 250)
 
-	app.Error("Failed to start, shutting down...\n\n\n")
+	app.Error("Failed to start, shutting down...")
 }
