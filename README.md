@@ -71,9 +71,9 @@ timer.End("Fetched foo.com/bar.jpg")
 Timer log lines will be outputting the elapsed time in time.Duration in a normal terminal, or in int64 format when your program is running on a non-terminal environment.
 See below documentation for more info.
 
-### JSON Output
+### Structured Output
 
-When your app isn't running on a terminal, it'll change the output format into:
+When your app isn't running on a terminal, it'll change the output in JSON:
 
 ```
 { time":"2014-10-04 11:44:22.418595705 -0700 PDT", "package":"database", "level":"INFO", "msg":"Connecting to mysql://azer@localhost:9900/foobar" }
@@ -87,3 +87,7 @@ When your app isn't running on a terminal, it'll change the output format into:
 ```
 
 So you can parse & process the output easily.
+
+### Setting The Output
+
+By default, it outputs to `stderr`. You can change it by calling `SetOutput` with an `*os.File` parameter. 
