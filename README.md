@@ -71,20 +71,19 @@ timer.End("Fetched foo.com/bar.jpg")
 Timer log lines will be outputting the elapsed time in time.Duration in a normal terminal, or in int64 format when your program is running on a non-terminal environment.
 See below documentation for more info.
 
-### Structured Output
+### JSON Output
 
 When your app isn't running on a terminal, it'll change the output format into:
 
 ```
-time="2014-09-29 23:51:59.690196205 -0700 PDT" package="app" level="INFO" msg="Starting at 9088"
-time="2014-09-29 23:51:59.690302069 -0700 PDT" package="database" level="INFO" msg="Connecting to mysql://azer@localhost:9900/foobar"
-time="2014-09-29 23:51:59.690315471 -0700 PDT" package="images" level="INFO" msg="Requesting an image at foo/bar.jpg"
-time="2014-09-30 13:12:58.20827907 -0700 PDT" package="images" level="TIMER" elapsed="250444460" msg="Fetched foo/bar.jpg"
-time="2014-09-29 23:51:59.940415043 -0700 PDT" package="database" level="ERROR" msg="Fatal connection error."
-time="2014-09-29 23:51:59.940454957 -0700 PDT" package="users" level="INFO" msg="John just logged  from Istanbul"
-time="2014-09-29 23:51:59.94046777 -0700 PDT" package="websocket" level="INFO" msg="Connecting..."
-time="2014-09-29 23:51:59.940476972 -0700 PDT" package="websocket" level="ERROR" msg="Unable to connect."
-time="2014-09-29 23:52:00.191250959 -0700 PDT" package="app" level="ERROR" msg="Failed to start, shutting down..."
+time":"2014-10-04 11:44:22.418595705 -0700 PDT", "package":"database", "level":"INFO", "msg":"Connecting to mysql://azer@localhost:9900/foobar" }
+{ "time":"2014-10-04 11:44:22.418600851 -0700 PDT", "package":"images", "level":"INFO", "msg":"Requesting an image at foo/bar.jpg" }
+{ "time":"2014-10-04 11:44:22.668645527 -0700 PDT", "package":"images", "level":"TIMER", "elapsed":"250032416", "msg":"Fetched foo/bar.jpg" }
+{ "time":"2014-10-04 11:44:22.668665527 -0700 PDT", "package":"database", "level":"ERROR", "msg":"Fatal connection error." }
+{ "time":"2014-10-04 11:44:22.668673037 -0700 PDT", "package":"users", "level":"INFO", "msg":"John just logged  from Istanbul" }
+{ "time":"2014-10-04 11:44:22.668676732 -0700 PDT", "package":"websocket", "level":"INFO", "msg":"Connecting..." }
+{ "time":"2014-10-04 11:44:22.668681092 -0700 PDT", "package":"websocket", "level":"ERROR", "msg":"Unable to connect." }
+{ "time":"2014-10-04 11:44:22.919726985 -0700 PDT", "package":"app", "level":"ERROR", "msg":"Failed to start, shutting down..." }
 ```
 
 So you can parse & process the output easily.
