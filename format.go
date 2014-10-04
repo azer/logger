@@ -30,7 +30,7 @@ func (l *Logger) Format(verbosity int, sort string, msg string) string {
 	t := time.Now()
 
 	if !colorEnabled {
-		return fmt.Sprintf("time=\"%s\" package=\"%s\" level=\"%s\" msg=\"%s\"", t, l.Name, sort, msg)
+		return fmt.Sprintf("{ \"time\":\"%s\", \"package\":\"%s\", \"level\":\"%s\", \"msg\":\"%s\" }", t, l.Name, sort, msg)
 	}
 
 	tf := t.Format("01.02.06 15:04:05.000")

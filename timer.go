@@ -23,7 +23,7 @@ func (t *Timer) Format(elapsed int64, msg string) string {
 	now := time.Now()
 
 	if !colorEnabled {
-		return fmt.Sprintf("time=\"%s\" package=\"%s\" level=\"TIMER\" elapsed=\"%d\" msg=\"%s\"", now, t.Logger.Name, elapsed, msg)
+		return fmt.Sprintf("{ \"time\":\"%s\", \"package\":\"%s\", \"level\":\"TIMER\", \"elapsed\":\"%d\", \"msg\":\"%s\" }", now, t.Logger.Name, elapsed, msg)
 	}
 
 	tf := now.Format("01.02.06 15:04:05.000")
