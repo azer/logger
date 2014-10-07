@@ -86,7 +86,11 @@ When your app isn't running on a terminal, it'll change the output in JSON:
 { "time":"2014-10-04 11:44:22.919726985 -0700 PDT", "package":"app", "level":"ERROR", "msg":"Failed to start, shutting down..." }
 ```
 
-So you can parse & process the output easily.
+So you can parse & process the output easily. Here is a command that lets you see the JSON output in your terminal;
+
+```
+LOG=* go run examples/simple.go 2>&1 | less
+```
 
 ### Setting The Output
 
