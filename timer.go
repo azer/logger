@@ -23,7 +23,8 @@ func (t *Timer) Format(elapsed int64, msg string) string {
 	now := time.Now()
 
 	if !colorEnabled {
-		return fmt.Sprintf("{ \"time\":\"%s\", \"package\":\"%s\", \"level\":\"TIMER\", \"elapsed\":\"%d\", \"msg\":\"%s\" }", now, t.Logger.Name, elapsed, msg)
+		elapsedMS := elapsed / 1000000
+		return fmt.Sprintf("{ \"time\":\"%s\", \"package\":\"%s\", \"level\":\"TIMER\", \"elapsed\": %d, \"elapsed_nano\": %d, \"msg\":\"%s\" }", now, t.Logger.Name, elapsedMS, elapsed, msg)
 	}
 
 	tf := now.Format("01.02.06 15:04:05.000")
