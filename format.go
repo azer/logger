@@ -45,8 +45,13 @@ func (l *Logger) JSONFormatAttrs (attrs *Attrs) string {
 		return ""
 	}
 
-	for key, value := range *attrs {
-		result = fmt.Sprintf("%s \"%s\":\"%s\",", result, key, value)
+	for key, val := range *attrs {
+		if val, ok := val.(int); ok {
+			result = fmt.Sprintf("%s \"%s\": %d,", result, key, val)
+			continue
+		}
+
+		result = fmt.Sprintf("%s \"%s\":\"%s\",", result, key, val)
 	}
 
 	return result
@@ -70,18 +75,18 @@ func (l *Logger) ColorfulAttrs(attrs *Attrs) string {
 		}
 
 		if val, ok := val.(int); ok {
-			result = fmt.Sprintf("%s %s%s=%s%d", result, grey, key, reset, val)
+			result = fmt.Sprintf("%s %s=%d", result, key, val)
 			continue
 		}
 
-		result = fmt.Sprintf("%s %s%s=%s%s", result, grey, key, reset, val)
+		result = fmt.Sprintf("%s %s=%s", result, key, val)
 	}
 
 	if empty == true {
 		return ""
 	}
 
-	return fmt.Sprintf("%s [%s %s] %s", grey, result, grey, reset)
+	return fmt.Sprintf("%s %s %s", grey, result, reset)
 }
 
 func (l *Logger) ColorfulPrefix(verbosity int) string {
