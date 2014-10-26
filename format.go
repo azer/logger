@@ -61,6 +61,11 @@ func (l *Logger) ColorfulAttrs(attrs *Attrs) string {
 			empty = false
 		}
 
+		if val, ok := val.(int); ok {
+			result = fmt.Sprintf("%s %s%s=%s%d", result, grey, key, reset, val)
+			continue
+		}
+
 		result = fmt.Sprintf("%s %s%s=%s%s", result, grey, key, reset, val)
 	}
 

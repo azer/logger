@@ -24,8 +24,9 @@ func main() {
 	timer := log.Timer()
 	time.Sleep(time.Millisecond * 500)
 	timer.End("Created a new %s image", "bike", logger.Attrs{
+		"id": 123456,
 		"model": "bmx",
 		"frame": "purple",
-		"year": "2014",
+		"year": 2014,
 	})
 }

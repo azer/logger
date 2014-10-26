@@ -1,6 +1,6 @@
 package logger
 
-type Attrs map[string]string
+type Attrs map[string]interface{}
 
 func SplitAttrs(v ...interface{}) ([]interface{}, *Attrs) {
 	if len(v) == 0 {
