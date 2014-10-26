@@ -41,6 +41,10 @@ func (l *Logger) JSONFormat(sort string, msg string, attrs string) string {
 func (l *Logger) JSONFormatAttrs (attrs *Attrs) string {
 	result := ""
 
+	if attrs == nil {
+		return ""
+	}
+
 	for key, value := range *attrs {
 		result = fmt.Sprintf("%s \"%s\":\"%s\",", result, key, value)
 	}
@@ -55,6 +59,10 @@ func (l *Logger) ColorfulFormat(prefix, msg string, attrs *Attrs) string {
 func (l *Logger) ColorfulAttrs(attrs *Attrs) string {
 	result := ""
 	empty := true
+
+	if attrs == nil {
+		return ""
+	}
 
 	for key, val := range *attrs {
 		if empty == true {

@@ -13,7 +13,7 @@ func main() {
 	log.Info("Requesting an image at foo/bar.jpg")
 	timer := log.Timer()
 	time.Sleep(time.Millisecond * 250)
-	timer.End("Fetched foo/bar.jpg", 9088)
+	timer.End("Fetched foo/bar.jpg")
 
 	log.Error("Failed to start, shutting down...")
 }
