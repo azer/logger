@@ -16,20 +16,27 @@ func (t *Timer) End(format string, v ...interface{}) {
 		return
 	}
 
-	t.Logger.Write(t.Format(Now()-t.Start, fmt.Sprintf(format, v...)))
+	elapsed := Now() - t.Start
+
+	v, attrs := SplitAttrs(v...)
+	t.Logger.Write(t.Format(elapsed, fmt.Sprintf(format, v...), attrs))
 }
 
-func (t *Timer) Format(elapsed int64, msg string) string {
-	now := time.Now()
-
+func (t *Timer) Format(elapsed int64, msg string, customAttrs *Attrs) string {
 	if !colorEnabled {
 		elapsedMS := elapsed / 1000000
-		return fmt.Sprintf("{ \"time\":\"%s\", \"package\":\"%s\", \"level\":\"TIMER\", \"elapsed\": %d, \"elapsed_nano\": %d, \"msg\":\"%s\" }", now, t.Logger.Name, elapsedMS, elapsed, msg)
+		attrs := fmt.Sprintf(" \"elapsed\": %d, \"elapsed_nano\": %d,", elapsedMS, elapsed)
+
+		if strCustomAttrs := t.Logger.JSONFormatAttrs(customAttrs); len(strCustomAttrs) > 0 {
+			attrs = fmt.Sprintf("%s %s", attrs, strCustomAttrs)
+		}
+
+		return t.Logger.JSONFormat("TIMER", msg, attrs)
 	}
 
-	tf := now.Format("01.02.06 15:04:05.000")
+	prefix := fmt.Sprintf("%s(%s%s%s)%s", grey, reset, time.Duration(elapsed), grey, t.Logger.Color)
 
-	return fmt.Sprintf("%s%s %s%s%s (%s%s%s)%s:%s %s", grey, tf, t.Logger.Color, t.Logger.Name, grey, reset, time.Duration(elapsed), grey, t.Logger.Color, reset, msg)
+	return t.Logger.ColorfulFormat(prefix, msg, customAttrs)
 }
 
 func Now() int64 {

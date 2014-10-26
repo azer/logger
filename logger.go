@@ -27,7 +27,9 @@ func (l *Logger) Info(format string, v ...interface{}) {
 		return
 	}
 
-	l.Output(1, "INFO", fmt.Sprintf(format, v...))
+	v, attrs := SplitAttrs(v...)
+
+	l.Output(1, "INFO", fmt.Sprintf(format, v...), attrs)
 }
 
 func (l *Logger) Timer() *Timer {
@@ -43,11 +45,13 @@ func (l *Logger) Error(format string, v ...interface{}) {
 		return
 	}
 
-	l.Output(3, "ERROR", fmt.Sprintf(format, v...))
+	v, attrs := SplitAttrs(v...)
+
+	l.Output(3, "ERROR", fmt.Sprintf(format, v...), attrs)
 }
 
-func (l *Logger) Output(verbosity int, sort string, msg string) {
-	l.Write(l.Format(verbosity, sort, msg))
+func (l *Logger) Output(verbosity int, sort string, msg string, attrs *Attrs) {
+	l.Write(l.Format(verbosity, sort, msg, attrs))
 }
 
 func (l *Logger) Write(log string) {

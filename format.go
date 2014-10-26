@@ -26,20 +26,63 @@ var (
 	}
 )
 
-func (l *Logger) Format(verbosity int, sort string, msg string) string {
-	t := time.Now()
-
+func (l *Logger) Format(verbosity int, sort string, msg string, attrs *Attrs) string {
 	if !colorEnabled {
-		return fmt.Sprintf("{ \"time\":\"%s\", \"package\":\"%s\", \"level\":\"%s\", \"msg\":\"%s\" }", t, l.Name, sort, msg)
+		return l.JSONFormat(sort, msg, l.JSONFormatAttrs(attrs))
 	}
 
-	tf := t.Format("01.02.06 15:04:05.000")
+	return l.ColorfulFormat(l.ColorfulPrefix(verbosity), msg, attrs)
+}
+
+func (l *Logger) JSONFormat(sort string, msg string, attrs string) string {
+	return fmt.Sprintf("{ \"time\":\"%s\", \"package\":\"%s\", \"level\":\"%s\",%s \"msg\":\"%s\" }", time.Now(), l.Name, sort, attrs, msg)
+}
+
+func (l *Logger) JSONFormatAttrs (attrs *Attrs) string {
+	result := ""
+
+	for key, value := range *attrs {
+		result = fmt.Sprintf("%s \"%s\":\"%s\",", result, key, value)
+	}
+
+	return result
+}
+
+func (l *Logger) ColorfulFormat(prefix, msg string, attrs *Attrs) string {
+	return fmt.Sprintf("%s%s %s%s%s:%s %s%s", grey, time.Now().Format("01.02.06 15:04:05.000"), l.Color, l.Name, prefix, reset, msg, l.ColorfulAttrs(attrs))
+}
+
+func (l *Logger) ColorfulAttrs(attrs *Attrs) string {
+	result := ""
+	empty := true
+
+	for key, val := range *attrs {
+		if empty == true {
+			empty = false
+		}
+
+		result = fmt.Sprintf("%s %s%s=%s%s", result, grey, key, reset, val)
+	}
+
+	if empty == true {
+		return ""
+	}
+
+	return fmt.Sprintf("%s [%s %s] %s", grey, result, grey, reset)
+}
+
+func (l *Logger) ColorfulPrefix(verbosity int) string {
+	if verbosity != 3 {
+		return ""
+	}
+
+	prefix := ""
 
 	if verbosity == 3 {
-		return fmt.Sprintf("%s%s %s%s%s(%s!%s)%s:%s %s", grey, tf, l.Color, l.Name, grey, red, grey, l.Color, reset, msg)
+		prefix = fmt.Sprintf("%s!", red)
 	}
 
-	return fmt.Sprintf("%s%s %s%s:%s %s", grey, tf, l.Color, l.Name, reset, msg)
+	return fmt.Sprintf("%s(%s%s)%s", grey, prefix, grey, l.Color)
 }
 
 func nextColor() string {

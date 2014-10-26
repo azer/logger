@@ -92,6 +92,27 @@ So you can parse & process the output easily. Here is a command that lets you se
 LOG=* go run examples/simple.go 2>&1 | less
 ```
 
+### Attributes
+
+To add custom attributes to the structured output;
+
+```go
+log.Info("Sending an e-mail...", logger.Attrs{
+  "from": "foo@bar.com",
+  "to": "qux@corge.com",
+})
+```
+
+The above log will appear in the structured output as:
+
+```go
+{ "time":"2014-10-04 11:44:22.919726985 -0700 PDT", "package":"mail", "level":"INFO", "msg":"Sending an e-mail", "from": "foo@foobar.com", "to": "qux@corge.com" }
+```
+
+In your command-line as:
+
+![](https://cldup.com/n4Uia8v1uo.png)
+
 ### Setting The Output
 
-By default, it outputs to `stderr`. You can change it by calling `SetOutput` with an `*os.File` parameter. 
+By default, it outputs to `stderr`. You can change it by calling `SetOutput` with an `*os.File` parameter.
