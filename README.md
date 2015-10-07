@@ -20,7 +20,7 @@ import "github.com/azer/logger"
 var log = logger.New("example-app")
 ```
 
-It gives only two methods; `Info`, `Timer` and `Error`.
+It gives only three methods; `Info`, `Timer` and `Error`.
 
 ```go
 log.Info("Running at %d", 8080)
