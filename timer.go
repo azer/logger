@@ -34,9 +34,9 @@ func (t *Timer) Format(elapsed int64, msg string, customAttrs *Attrs) string {
 		return t.Logger.JSONFormat("TIMER", msg, attrs)
 	}
 
-	prefix := fmt.Sprintf("%s(%s%s%s)%s", grey, reset, time.Duration(elapsed), grey, t.Logger.Color)
+	prefix := fmt.Sprintf("(%s%s)%s", reset, time.Duration(elapsed), t.Logger.Color)
 
-	return t.Logger.ColorfulFormat(prefix, msg, customAttrs)
+	return t.Logger.PrettyFormat(prefix, msg, customAttrs)
 }
 
 func Now() int64 {
