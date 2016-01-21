@@ -12,6 +12,9 @@ type Timer struct {
 }
 
 func (t *Timer) End(format string, v ...interface{}) {
+	// Not changed to a call up to Logger.amIEnabled, because if logger wqsn't
+	// enabled by the time the Timer was created then the Timer should remain
+	// disabled. Also, Principle of Demeter, &etc.
 	if !t.IsEnabled {
 		return
 	}

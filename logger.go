@@ -18,12 +18,22 @@ func New(name string) *Logger {
 	}
 }
 
+// Checks whether this logger is enabled, sets self.IsEnabled, and returns the value.
+// This is a little kludgy but was introduced to allow dynamic log-name/log-level
+// changes to be made by programs at runtime. IsEnabled property is retained for API
+// compatibility.
+func (l *Logger) amIEnabled() bool {
+	e := IsEnabled(l.Name)
+	l.IsEnabled = e
+	return e
+}
+
 func (l *Logger) Info(format string, v ...interface{}) {
 	if verbosity > 1 {
 		return
 	}
 
-	if !l.IsEnabled {
+	if !l.amIEnabled() {
 		return
 	}
 
@@ -36,12 +46,12 @@ func (l *Logger) Timer() *Timer {
 	return &Timer{
 		Logger:    l,
 		Start:     Now(),
-		IsEnabled: l.IsEnabled && verbosity < 3,
+		IsEnabled: l.amIEnabled() && verbosity < 3,
 	}
 }
 
 func (l *Logger) Error(format string, v ...interface{}) {
-	if !l.IsEnabled {
+	if !l.amIEnabled() {
 		return
 	}
 
