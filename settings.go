@@ -1,23 +1,47 @@
 package logger
 
 import (
-	"errors"
+	"io"
 	"os"
 	"strings"
+	"syscall"
+
+	"github.com/azer/is-terminal"
 )
 
 var (
-	out                 = os.Stderr
-	verbosity           = initVerbosity()
-	enabled, allEnabled = initEnabled()
+	// Verbosity is the level of verbosity, between 1 and 3. It is initialised from
+	// an environment variable if given, you can also set this using the LevelX constants.
+	Verbosity logLevelT
+	// Enabled is a map of logger names to booleans indicating whether they are enabled or not.
+	// It is pre-populated from environment variable "LOG", and may initially omit logs
+	// not given in that envvar.
+	Enabled map[string]bool
+	// AllEnabled is a global boolean that activates all loggers regardless of the contents
+	// of Enabled.
+	AllEnabled bool
+
+	out          io.Writer
+	colorEnabled bool
 )
 
-// Enabled - Returns the map representing enabled logs, and whether all loggers are
-// enabled regardless of name. These are initialised from environment variables
-// at start-up.
-func Enabled() (map[string]bool, bool) {
-	return enabled, allEnabled
+func init() {
+	out = os.Stderr
+	colorEnabled = isterminal.IsTerminal(syscall.Stderr)
+	Enabled, AllEnabled = initEnabled()
+	Verbosity = initVerbosity()
 }
+
+type logLevelT int
+
+const (
+	// Level1 enables Info, Timer and Error log levels.
+	Level1 logLevelT = iota + 1
+	// Level2 enables Timer and Error log levels.
+	Level2
+	// Level3 enables Error log level.
+	Level3
+)
 
 // initEnabled - Gets the LOG environment variable, splits on commas, and stores the
 // values as loggers that are permitted to print. Does not validate that loggers
@@ -40,64 +64,21 @@ func initEnabled() (map[string]bool, bool) {
 	return all, false
 }
 
-// IsEnabled - Returns whether a given logger is present and enabled.
-func IsEnabled(name string) bool {
-	if allEnabled {
-		return true
-	}
-
-	value, ok := enabled[name]
-	if !ok {
-		return false
-	}
-	return value
-}
-
-// SetEnabled - Enable or Disable loggers by name.
-func SetEnabled(name string, state bool) {
-	enabled[name] = state
-}
-
-// SetAllEnabled - Enable or Disable *all* loggers.
-// NB: This does not change the status of individual loggers, only whether *all*
-// loggers should be allowed print. In other words, setting this to 'false' does
-// not disable loggers that are permitted to print, only those that are not.
-func SetAllEnabled(state bool) {
-	allEnabled = state
-}
-
 // Populates default value of 'verbosity' variable from Envvar.
-func initVerbosity() int {
+func initVerbosity() logLevelT {
 	switch strings.ToUpper(os.Getenv("LOG_LEVEL")) {
 	case "ERROR":
-		return 3
+		return Level3
 	case "TIMER":
-		return 2
+		return Level2
 	default:
-		return 1
+		return Level1
 	}
 }
 
-// Verbosity - Get the value of the LOG_LEVEL environment variable, converted to an integer.
-// Default/Invalid value is 1. If "TIMER", this is 2. If "ERROR", this is 3.
-func Verbosity() int {
-	return verbosity
-}
-
-// SetVerbosity - Manually set the logger verbosity; must be one of:
-// * 1 - Info, Timer and Error
-// * 2 - Timer and Error
-// * 3 - Error only
-func SetVerbosity(level int) error {
-	if level < 1 && level > 3 {
-		return errors.New("Verbosity can only be set to a value of 1, 2 or 3")
-	}
-	verbosity = level
-	return nil
-}
-
-// SetOutput directs logs to a file; this disables terminal colors
-func SetOutput(w *os.File) {
+// SetOutput directs logs to a writer other than Stderr; this disables pretty pretty-printing
+// and outputs JSON instead.
+func SetOutput(w io.Writer) {
 	colorEnabled = false
 	out = w
 }

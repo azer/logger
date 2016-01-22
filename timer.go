@@ -5,16 +5,18 @@ import (
 	"time"
 )
 
+// Timer is a special sub-logger that records the moment of its creation, and
+// outputs time elapsed since that point when its End method is called.
 type Timer struct {
 	Logger    *Logger
 	Start     int64
 	IsEnabled bool
 }
 
+// End prints the given message and the elapsed time since the Timer was created
+// to the logger output. This does not print if the parent logger was disabled
+// at the time of the Timer's creation, even if it is subsequently enabled.
 func (t *Timer) End(format string, v ...interface{}) {
-	// Not changed to a call up to Logger.amIEnabled, because if logger wqsn't
-	// enabled by the time the Timer was created then the Timer should remain
-	// disabled. Also, Principle of Demeter, &etc.
 	if !t.IsEnabled {
 		return
 	}
@@ -25,6 +27,7 @@ func (t *Timer) End(format string, v ...interface{}) {
 	t.Logger.Write(t.Format(elapsed, fmt.Sprintf(format, v...), attrs))
 }
 
+// Format is used to create a nicely formatted timestamp and message for Timer.
 func (t *Timer) Format(elapsed int64, msg string, customAttrs *Attrs) string {
 	if !colorEnabled {
 		elapsedMS := elapsed / 1000000
@@ -42,6 +45,7 @@ func (t *Timer) Format(elapsed int64, msg string, customAttrs *Attrs) string {
 	return t.Logger.PrettyFormat(prefix, msg, customAttrs)
 }
 
+// Now is a shortcut for returning the current time in Unix nanoseconds.
 func Now() int64 {
 	return time.Now().UnixNano()
 }
