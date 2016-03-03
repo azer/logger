@@ -25,6 +25,7 @@ func New(name string) *Logger {
 	if _, ok := Enabled[name]; !ok {
 		Enabled[name] = false
 	}
+
 	return &Logger{
 		Name:  name,
 		Color: nextColor(),

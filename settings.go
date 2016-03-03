@@ -50,7 +50,7 @@ func initEnabled() (map[string]bool, bool) {
 	val := os.Getenv("LOG")
 
 	if val == "*" {
-		return nil, true
+		return map[string]bool{}, true
 	}
 
 	all := map[string]bool{}
