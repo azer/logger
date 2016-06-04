@@ -91,12 +91,7 @@ func (l *Logger) PrettyAttrs(attrs *Attrs) string {
 			empty = false
 		}
 
-		if val, ok := val.(int); ok {
-			result = fmt.Sprintf("%s %s=%d", result, key, val)
-			continue
-		}
-
-		result = fmt.Sprintf("%s %s=%s", result, key, val)
+		result = fmt.Sprintf("%s %s=%v", result, key, val)
 	}
 
 	if empty == true {
