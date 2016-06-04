@@ -66,7 +66,7 @@ func (l *Logger) JSONFormatAttrs(attrs *Attrs) string {
 			continue
 		}
 
-		result = fmt.Sprintf("%s \"%s\":\"%s\",", result, key, val)
+		result = fmt.Sprintf("%s \"%s\":\"%v\",", result, key, val)
 	}
 
 	return result
