@@ -89,7 +89,7 @@ When your app isn't running on a terminal, it'll change the output in JSON:
 So you can parse & process the output easily. Here is a command that lets you see the JSON output in your terminal;
 
 ```
-LOG=* go run examples/simple.go 2>&1 | less
+LOG=* go run example/simple.go 2>&1 | less
 ```
 
 ### Attributes
