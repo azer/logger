@@ -10,7 +10,7 @@ Minimalistic logging library for Go.
 * [Structured JSON output](#structured-output)
 * [Programmatical Usage](#programmatical-usage)
 
-![](https://i.cloudup.com/rUyno2tHCx.png)
+![](https://cldup.com/CN7JhSDMwf.png)
 
 ## Install
 
@@ -137,13 +137,13 @@ The above log will appear in the structured output as:
 
 In your command-line as:
 
-![](https://cldup.com/n4Uia8v1uo.png)
+![](https://cldup.com/FEzVDkEexs.png)
 
 ## Programmatical Usage
 
 Customizing the default behavior is easy. You can implement your own output;
 
-```
+```go
 import (
   "github.com/azer/logger"
 )
