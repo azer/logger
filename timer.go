@@ -30,6 +30,8 @@ func (t *Timer) End(format string, v ...interface{}) {
 	}
 
 	(*attrs)["elapsed_nano"] = elapsed
+	(*attrs)["elapsed"] = elapsed / 1000000
+
 	runtime.Log(t.Logger.Name, "TIMER", fmt.Sprintf(format, v...), attrs)
 }
 

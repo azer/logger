@@ -1,5 +1,9 @@
 package logger
 
+import (
+	"os"
+)
+
 var (
 	runtime *Runtime
 	muted   = &OutputSettings{}
@@ -11,7 +15,7 @@ var (
 )
 
 func init() {
-	writer, settings := NewStandardOutput()
+	writer, settings := NewStandardOutput(os.Stderr)
 	runtime = &Runtime{
 		Settings: settings,
 		Writers:  []OutputWriter{writer},
@@ -47,4 +51,10 @@ func (runtime *Runtime) Log(name, sort, msg string, attrs *Attrs) {
 			w.Write(name, sort, msg, attrs)
 		}
 	}
+}
+
+// Legacy method
+func SetOutput(file *os.File) {
+	writer, _ := NewStandardOutput(file)
+	runtime.Writers[0] = writer
 }

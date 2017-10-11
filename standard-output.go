@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/azer/is-terminal"
 	"os"
@@ -9,8 +10,19 @@ import (
 	"time"
 )
 
+func NewStandardOutput(file *os.File) (OutputWriter, map[string]*OutputSettings) {
+	var writer OutputWriter = StandardWriter{
+		ColorsEnabled: isterminal.IsTerminal(syscall.Stderr),
+		Target:        file,
+	}
+
+	defaultOutputSettings := parseVerbosityLevel(os.Getenv("LOG_LEVEL"))
+	return writer, parsePackageSettings(os.Getenv("LOG"), defaultOutputSettings)
+}
+
 type StandardWriter struct {
 	ColorsEnabled bool
+	Target        *os.File
 }
 
 func (sw StandardWriter) Write(name, sort, msg string, attrs *Attrs) {
@@ -26,7 +38,17 @@ func (sw *StandardWriter) Format(name, sort, msg string, attrs *Attrs) string {
 }
 
 func (standardWriter *StandardWriter) JSONFormat(name, sort, msg string, attrs *Attrs) string {
-	return ""
+	(*attrs)["package"] = name
+	(*attrs)["level"] = sort
+	(*attrs)["msg"] = msg
+	(*attrs)["time"] = time.Now()
+
+	str, err := json.Marshal(attrs)
+	if err != nil {
+		return fmt.Sprintf(`{ "logger-error": "%v" }`, err)
+	}
+
+	return string(str)
 }
 
 func (sw *StandardWriter) PrettyFormat(name, sort, msg string, attrs *Attrs) string {
@@ -55,7 +77,7 @@ func (sw *StandardWriter) PrettyAttrs(attrs *Attrs) string {
 func (sw *StandardWriter) PrettyLabel(name, sort string, attrs *Attrs) string {
 	return fmt.Sprintf("%s%s%s:%s",
 		colorFor(name),
-		strings.Title(strings.ToLower(sort)),
+		name,
 		sw.PrettyLabelExt(name, sort, attrs),
 		reset)
 }
@@ -77,15 +99,6 @@ func (sw *StandardWriter) PrettyLabelExt(name, sort string, attrs *Attrs) string
 	}
 
 	return ""
-}
-
-func NewStandardOutput() (OutputWriter, map[string]*OutputSettings) {
-	var writer OutputWriter = StandardWriter{
-		ColorsEnabled: isterminal.IsTerminal(syscall.Stderr),
-	}
-
-	defaultOutputSettings := parseVerbosityLevel(os.Getenv("LOG_LEVEL"))
-	return writer, parsePackageSettings(os.Getenv("LOG"), defaultOutputSettings)
 }
 
 // Accepts: foo,bar,qux@timer
