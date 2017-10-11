@@ -17,9 +17,13 @@ var (
 	// It is pre-populated from environment variable "LOG", and may initially omit logs
 	// not given in that envvar.
 	Enabled map[string]bool
+
 	// AllEnabled is a global boolean that activates all loggers regardless of the contents
 	// of Enabled.
 	AllEnabled bool
+
+	// In case AllEnabled is enabled and you want to filter some packages, you can pass LOG_EXCEPT=foo,bar
+	Except map[string]bool
 
 	out          io.Writer
 	colorEnabled bool
@@ -29,6 +33,11 @@ func init() {
 	out = os.Stderr
 	colorEnabled = isterminal.IsTerminal(syscall.Stderr)
 	Enabled, AllEnabled = initEnabled()
+
+	if AllEnabled {
+		Except = initExcept()
+	}
+
 	Verbosity = initVerbosity()
 }
 
@@ -53,6 +62,14 @@ func initEnabled() (map[string]bool, bool) {
 		return map[string]bool{}, true
 	}
 
+	return readPackageNames(val), false
+}
+
+func initExcept() map[string]bool {
+	return readPackageNames(os.Getenv("LOG_EXCEPT"))
+}
+
+func readPackageNames(val string) map[string]bool {
 	all := map[string]bool{}
 	keys := strings.Split(val, ",")
 
@@ -61,7 +78,7 @@ func initEnabled() (map[string]bool, bool) {
 		all[strings.TrimSpace(key)] = true
 	}
 
-	return all, false
+	return all
 }
 
 // Populates default value of 'verbosity' variable from Envvar.

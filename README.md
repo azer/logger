@@ -1,6 +1,6 @@
 ## logger
 
-Minimalistic logging library for Go.
+Minimalistic logging library for Go. Supports timers, filtering by package names, log levels and structured output.
 
 ![](https://i.cloudup.com/rUyno2tHCx.png)
 
@@ -48,7 +48,12 @@ This will enable all logs. You can choose the packages that you'd like to displa
 $ LOG=images,users go run example-app.go
 ```
 
-In the above example, you'll only see logs from `images` and `users` packages.
+In the above example, you'll only see logs from `images` and `users` packages. You can allow everything except some specific packages using `LOG_EXCEPT` parameter:
+
+```bash
+$ LOG=* LOG_EXCEPT=users go run example-app.go
+```
+
 
 You can filter logs by their level, too. If `INFO` level is not useful for your case, pass `LOG_LEVEL`:
 

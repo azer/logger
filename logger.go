@@ -36,6 +36,10 @@ func New(name string) *Logger {
 // (logger.Enabled map), or enabled due to logger.AllEnabled being set to true.
 func (l *Logger) IsEnabled() bool {
 	if AllEnabled {
+		if _, ok := Except[l.Name]; ok {
+			return false
+		}
+
 		return true
 	}
 
