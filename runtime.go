@@ -53,6 +53,11 @@ func (runtime *Runtime) Log(name, sort, msg string, attrs *Attrs) {
 	}
 }
 
+// Add a new writer
+func Hook(writer OutputWriter) {
+	runtime.Writers = append(runtime.Writers, writer)
+}
+
 // Legacy method
 func SetOutput(file *os.File) {
 	writer, _ := NewStandardOutput(file)

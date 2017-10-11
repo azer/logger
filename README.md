@@ -4,10 +4,11 @@ Minimalistic logging library for Go.
 
 **Features:**
 
-* Advanced output filters (package and/or level)
-* Attributes
-* Timers for measuring performance
-* Pretty console & structured JSON output by default
+* [Advanced output filters (package and/or level)](#filters)
+* [Attributes](#attributes)
+* [Timers for measuring performance](#timers)
+* [Structured JSON output](#structured-output)
+* [Programmatical Usage](#programmatical-usage)
 
 ![](https://i.cloudup.com/rUyno2tHCx.png)
 
@@ -17,7 +18,7 @@ Minimalistic logging library for Go.
 $ go get github.com/azer/logger
 ```
 
-## Basic Usage
+## Getting Started
 
 Create an instance with a preferred name;
 
@@ -39,43 +40,53 @@ if err != nil {
 }
 ```
 
-Done. Now run your app, passing `LOG=*` environment variable ([It's silent by default](http://www.linfo.org/rule_of_silence.html));
+Done. Now run your app, passing `LOG=*` environment variable. If you don't pass `LOG=*`, ([logging will be silent by default](http://www.linfo.org/rule_of_silence.html));
 
 ```
 $ LOG=* go run example-app.go
 01:23:21.251 example-app Running at 8080
 ```
 
+You can filter logs by level, too. The hierarchy is; `mute`, `info`, `timer` and `error`.
+After the package selector, you can optionally specify minimum log level:
+
+```
+$ LOG=*@timer go run example-app.go
+01:23:21.251 example-app Running at 8080
+```
+
+The above example will only show `timer` and `error` levels. If you choose `error`, it'll show only error logs.
+
 Check out [examples](https://github.com/azer/logger/tree/master/examples) for a more detailed example.
 
-### Filtering
+## Filters
 
-By default, it won't output. Enable it with `LOG` environment variable:
+You can enable all logs by specifying `*`:
 
 ```bash
 $ LOG=* go run example-app.go
 ```
 
-This will enable all logs. You can choose the packages that you'd like to display:
+Or, choose specific packages that you want to see logs from:
 
 ```bash
 $ LOG=images,users go run example-app.go
 ```
 
-In the above example, you'll only see logs from `images` and `users` packages. You can allow everything except some specific packages using `LOG_EXCEPT` parameter:
+In the above example, you'll only see logs from `images` and `users` packages. What if we want to see only `timer` and `error` level logs?
 
 ```bash
-$ LOG=* LOG_EXCEPT=users go run example-app.go
+$ LOG=images@timer,users go run example-app.go
 ```
 
 
-You can filter logs by their level, too. If `INFO` level is not useful for your case, pass `LOG_LEVEL`:
+Another example; show error logs from all packages, but hide logs from `database` package:
 
 ```bash
-$ LOG=images,users LOG_LEVEL=error go run example-app.go
+$ LOG=*@error,database@mute go run example-app.go
 ```
 
-### Timers
+## Timers
 
 You can use timer logs for measuring your program. For example;
 
@@ -90,7 +101,7 @@ timer.End("Fetched foo.com/bar.jpg")
 Timer log lines will be outputting the elapsed time in time.Duration in a normal terminal, or in int64 format when your program is running on a non-terminal environment.
 See below documentation for more info.
 
-### Structured Output
+## Structured Output
 
 When your app isn't running on a terminal, it'll change the output in JSON:
 
@@ -99,19 +110,15 @@ When your app isn't running on a terminal, it'll change the output in JSON:
 { "time":"2014-10-04 11:44:22.418600851 -0700 PDT", "package":"images", "level":"INFO", "msg":"Requesting an image at foo/bar.jpg" }
 { "time":"2014-10-04 11:44:22.668645527 -0700 PDT", "package":"images", "level":"TIMER", "elapsed":"250032416", "msg":"Fetched foo/bar.jpg" }
 { "time":"2014-10-04 11:44:22.668665527 -0700 PDT", "package":"database", "level":"ERROR", "msg":"Fatal connection error." }
-{ "time":"2014-10-04 11:44:22.668673037 -0700 PDT", "package":"users", "level":"INFO", "msg":"John just logged  from Istanbul" }
-{ "time":"2014-10-04 11:44:22.668676732 -0700 PDT", "package":"websocket", "level":"INFO", "msg":"Connecting..." }
-{ "time":"2014-10-04 11:44:22.668681092 -0700 PDT", "package":"websocket", "level":"ERROR", "msg":"Unable to connect." }
-{ "time":"2014-10-04 11:44:22.919726985 -0700 PDT", "package":"app", "level":"ERROR", "msg":"Failed to start, shutting down..." }
 ```
 
 So you can parse & process the output easily. Here is a command that lets you see the JSON output in your terminal;
 
 ```
-LOG=* go run example/simple.go 2>&1 | less
+LOG=* go run examples/simple.go 2>&1 | less
 ```
 
-### Attributes
+## Attributes
 
 To add custom attributes to the structured output;
 
@@ -132,6 +139,24 @@ In your command-line as:
 
 ![](https://cldup.com/n4Uia8v1uo.png)
 
-### Setting The Output
+## Programmatical Usage
 
-By default, it outputs to `stderr`. You can change it by calling `SetOutput` with an `*os.File` parameter.
+Customizing the default behavior is easy. You can implement your own output;
+
+```
+import (
+  "github.com/azer/logger"
+)
+
+type CustomWriter struct {}
+
+func (cw CustomWriter) Write (pkg, sort, msg string, attrs *logger.Attrs) {
+  fmt.Println("custom log -> ", pkg, sort, msg, attrs)
+}
+
+func main () {
+  logger.Hook(&CustomWriter{})
+}
+```
+
+See `examples/programmatical.go` for a working version of this example.
