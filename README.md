@@ -1,6 +1,13 @@
 ## logger
 
-Minimalistic logging library for Go. Supports timers, filtering by package names, log levels and structured output.
+Minimalistic logging library for Go.
+
+**Features:**
+
+* Advanced output filters (package and/or level)
+* Attributes
+* Timers for measuring performance
+* Pretty console & structured JSON output by default
 
 ![](https://i.cloudup.com/rUyno2tHCx.png)
 
@@ -10,9 +17,9 @@ Minimalistic logging library for Go. Supports timers, filtering by package names
 $ go get github.com/azer/logger
 ```
 
-## Manual
+## Basic Usage
 
-First create an instance with a preferred name;
+Create an instance with a preferred name;
 
 ```go
 import "github.com/azer/logger"
@@ -20,7 +27,7 @@ import "github.com/azer/logger"
 var log = logger.New("example-app")
 ```
 
-It gives only three methods; `Info`, `Timer` and `Error`.
+Every logger has three methods: `Info`, `Timer` and `Error`.
 
 ```go
 log.Info("Running at %d", 8080)
@@ -32,7 +39,14 @@ if err != nil {
 }
 ```
 
-Check out [example/simple.go](https://github.com/azer/logger/blob/master/example/simple.go) for a more detailed example.
+Done. Now run your app, passing `LOG=*` environment variable ([It's silent by default](http://www.linfo.org/rule_of_silence.html));
+
+```
+$ LOG=* go run example-app.go
+01:23:21.251 example-app Running at 8080
+```
+
+Check out [examples](https://github.com/azer/logger/tree/master/examples) for a more detailed example.
 
 ### Filtering
 

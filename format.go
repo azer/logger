@@ -1,12 +1,13 @@
 package logger
 
 import (
-	"fmt"
-	"time"
+//	"fmt"
+//"time"
 )
 
 var (
 	colorIndex = 0
+	colorDict  = map[string]string{}
 	white      = "\033[37m"
 	reset      = "\033[0m"
 	bold       = "\033[1m"
@@ -21,7 +22,7 @@ var (
 	}
 )
 
-// Format returns either a JSON string or a pretty line for printing to terminal,
+/*// Format returns either a JSON string or a pretty line for printing to terminal,
 // depending on whether logger believes it's printing to stderr or to another writer.
 func (l *Logger) Format(verbosity int, sort string, msg string, attrs *Attrs) string {
 	if !colorEnabled {
@@ -109,9 +110,18 @@ func (l *Logger) PrettyPrefix(verbosity int) string {
 		return ""
 	}
 	return fmt.Sprintf("(%s%s)", red+"!", l.Color)
-}
+}*/
 
 func nextColor() string {
 	colorIndex = colorIndex + 1
 	return colors[colorIndex%len(colors)]
+}
+
+func colorFor(key string) string {
+	if color, ok := colorDict[key]; ok {
+		return color
+	}
+
+	colorDict[key] = nextColor()
+	return colorDict[key]
 }

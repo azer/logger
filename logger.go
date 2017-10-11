@@ -9,92 +9,50 @@ import (
 type Logger struct {
 	// Name by which the logger is identified when enabling or disabling it, and by envvar.
 	Name string
-	// Color is chosen automatically. It is a terminal escape code, not a color name.
-	Color string
 }
 
-// New returns a logger bound to the given name. It will only be active when
-// the name is enabled in the global Enabled map, which can be done using the
-// LOG=<names> environment variable, or by manually setting it true in the Enabled map.
-// At time of creation this adds a false value for its name to Enabled if no value
-// already exists; in other words, it defaults to disabled. This may cause a
-// race condition in Enabled, however, if another goroutine is accessing the Map.
+// New returns a logger bound to the given name.
 func New(name string) *Logger {
-	// Ensure there's an entry, but if not yet true then no env-var has yet enabled
-	// it so default to disabled.
-	if _, ok := Enabled[name]; !ok {
-		Enabled[name] = false
-	}
-
 	return &Logger{
-		Name:  name,
-		Color: nextColor(),
+		Name: name,
 	}
 }
 
-// IsEnabled checks whether this logger is enabled in the global roster
-// (logger.Enabled map), or enabled due to logger.AllEnabled being set to true.
-func (l *Logger) IsEnabled() bool {
-	if AllEnabled {
-		if _, ok := Except[l.Name]; ok {
-			return false
-		}
-
-		return true
+// Returns output settings for this package. If there isn't anything specified,
+// returns default muted settings.
+func (logger *Logger) OutputSettings() *OutputSettings {
+	if settings, ok := runtime.Settings[logger.Name]; ok {
+		return settings
 	}
 
-	value, ok := Enabled[l.Name]
-	if !ok {
-		return false
+	// If there is a "*" (Select all) setting, return that
+	if settings, ok := runtime.Settings["*"]; ok {
+		return settings
 	}
-	return value
+
+	return muted
 }
 
-// Info prints log information to the screen that is informational in nature; it
-// is the most verbose level (1) and is disabled at verbosity levels 2 and 3.
+// Info prints log information to the screen that is informational in nature.
 func (l *Logger) Info(format string, v ...interface{}) {
-	if Verbosity > 1 {
-		return
+	if l.OutputSettings().Info {
+		v, attrs := SplitAttrs(v...)
+		runtime.Log(l.Name, "INFO", fmt.Sprintf(format, v...), attrs)
 	}
-
-	if !l.IsEnabled() {
-		return
-	}
-
-	v, attrs := SplitAttrs(v...)
-
-	l.Output(1, "INFO", fmt.Sprintf(format, v...), attrs)
 }
 
-// Timer returns a timer sub-logger. Timers have verbosity level 2, they are
-// considered a higher priority than Info and lower than Error.
-// If a logger was disabled when a timer is created, the timer remains disabled
-// even if the logger is enabled during the timer's lifespan.
+// Timer returns a timer sub-logger.
 func (l *Logger) Timer() *Timer {
 	return &Timer{
-		Logger:    l,
-		Start:     Now(),
-		IsEnabled: l.IsEnabled() && Verbosity < 3,
+		Logger: l,
+		Start:  Now(),
 	}
 }
 
 // Error logs an error message using fmt. It has log-level 3, the highest level.
 func (l *Logger) Error(format string, v ...interface{}) {
-	if !l.IsEnabled() {
-		return
+	if l.OutputSettings().Error {
+		v, attrs := SplitAttrs(v...)
+		runtime.Log(l.Name, "ERROR", fmt.Sprintf(format, v...), attrs)
 	}
-
-	v, attrs := SplitAttrs(v...)
-
-	l.Output(3, "ERROR", fmt.Sprintf(format, v...), attrs)
-}
-
-// Output is the lower-level call delegated to by Info/Timer/Error, and can be used
-// to directly write to the underlying buffer regardless of log-level.
-func (l *Logger) Output(verbosity int, sort string, msg string, attrs *Attrs) {
-	l.Write(l.Format(verbosity, sort, msg, attrs))
-}
-
-func (l *Logger) Write(log string) {
-	fmt.Fprintln(out, log)
 }

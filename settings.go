@@ -1,6 +1,6 @@
 package logger
 
-import (
+/*import (
 	"io"
 	"os"
 	"strings"
@@ -13,10 +13,11 @@ var (
 	// Verbosity is the level of verbosity, between 1 and 3. It is initialised from
 	// an environment variable if given, you can also set this using the LevelX constants.
 	Verbosity logLevelT
+
 	// Enabled is a map of logger names to booleans indicating whether they are enabled or not.
 	// It is pre-populated from environment variable "LOG", and may initially omit logs
-	// not given in that envvar.
-	Enabled map[string]bool
+	// not given in that envvar. User can choose specific level for a specific package.
+	Enabled map[string]logLevelT
 
 	// AllEnabled is a global boolean that activates all loggers regardless of the contents
 	// of Enabled.
@@ -30,8 +31,6 @@ var (
 )
 
 func init() {
-	out = os.Stderr
-	colorEnabled = isterminal.IsTerminal(syscall.Stderr)
 	Enabled, AllEnabled = initEnabled()
 
 	if AllEnabled {
@@ -44,12 +43,14 @@ func init() {
 type logLevelT int
 
 const (
+	// Level0 mutes all logs
+	Level0 logLevelT = 0
 	// Level1 enables Info, Timer and Error log levels.
-	Level1 logLevelT = iota + 1
+	Level1 logLevelT = 1
 	// Level2 enables Timer and Error log levels.
-	Level2
+	Level2 logLevelT = 2
 	// Level3 enables Error log level.
-	Level3
+	Level3 logLevelT = 3
 )
 
 // initEnabled - Gets the LOG environment variable, splits on commas, and stores the
@@ -69,28 +70,9 @@ func initExcept() map[string]bool {
 	return readPackageNames(os.Getenv("LOG_EXCEPT"))
 }
 
-func readPackageNames(val string) map[string]bool {
-	all := map[string]bool{}
-	keys := strings.Split(val, ",")
-
-	for _, key := range keys {
-		// Trim in case people pass space-gapped names.
-		all[strings.TrimSpace(key)] = true
-	}
-
-	return all
-}
-
 // Populates default value of 'verbosity' variable from Envvar.
 func initVerbosity() logLevelT {
-	switch strings.ToUpper(os.Getenv("LOG_LEVEL")) {
-	case "ERROR":
-		return Level3
-	case "TIMER":
-		return Level2
-	default:
-		return Level1
-	}
+	return parseLogLevel(os.Getenv("LOG_LEVEL"))
 }
 
 // SetOutput directs logs to a writer other than Stderr; this disables pretty pretty-printing
@@ -99,3 +81,4 @@ func SetOutput(w io.Writer) {
 	colorEnabled = false
 	out = w
 }
+*/
