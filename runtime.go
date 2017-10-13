@@ -15,15 +15,15 @@ var (
 )
 
 func init() {
-	writer, settings := NewStandardOutput(os.Stderr)
 	runtime = &Runtime{
-		Settings: settings,
-		Writers:  []OutputWriter{writer},
+		Writers: []OutputWriter{
+			NewStandardOutput(os.Stderr),
+		},
 	}
 }
 
 type OutputWriter interface {
-	Write(name, sort, msg string, attrs *Attrs)
+	Write(log *Log)
 }
 
 type OutputSettings struct {
@@ -33,22 +33,20 @@ type OutputSettings struct {
 }
 
 type Runtime struct {
-	// The verbosity level preference.
-	Settings map[string]*OutputSettings
-	Writers  []OutputWriter
+	Writers []OutputWriter
 }
 
-func (runtime *Runtime) Log(name, sort, msg string, attrs *Attrs) {
+func (runtime *Runtime) Log(log *Log) {
 	if len(runtime.Writers) == 0 {
 		return
 	}
 
 	// Avoid getting into a loop if there is just one writer
 	if len(runtime.Writers) == 1 {
-		runtime.Writers[0].Write(name, sort, msg, attrs)
+		runtime.Writers[0].Write(log)
 	} else {
 		for _, w := range runtime.Writers {
-			w.Write(name, sort, msg, attrs)
+			w.Write(log)
 		}
 	}
 }
@@ -60,6 +58,6 @@ func Hook(writer OutputWriter) {
 
 // Legacy method
 func SetOutput(file *os.File) {
-	writer, _ := NewStandardOutput(file)
+	writer := NewStandardOutput(file)
 	runtime.Writers[0] = writer
 }

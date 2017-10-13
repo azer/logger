@@ -10,40 +10,71 @@ import (
 	"time"
 )
 
-func NewStandardOutput(file *os.File) (OutputWriter, map[string]*OutputSettings) {
-	var writer OutputWriter = StandardWriter{
+func NewStandardOutput(file *os.File) OutputWriter {
+	var writer = StandardWriter{
 		ColorsEnabled: isterminal.IsTerminal(syscall.Stderr),
 		Target:        file,
 	}
 
 	defaultOutputSettings := parseVerbosityLevel(os.Getenv("LOG_LEVEL"))
-	return writer, parsePackageSettings(os.Getenv("LOG"), defaultOutputSettings)
+	writer.Settings = parsePackageSettings(os.Getenv("LOG"), defaultOutputSettings)
+
+	return writer
 }
 
 type StandardWriter struct {
 	ColorsEnabled bool
 	Target        *os.File
+	Settings      map[string]*OutputSettings
 }
 
-func (sw StandardWriter) Write(name, sort, msg string, attrs *Attrs) {
-	fmt.Fprintln(os.Stderr, sw.Format(name, sort, msg, attrs))
-}
-
-func (sw *StandardWriter) Format(name, sort, msg string, attrs *Attrs) string {
-	if sw.ColorsEnabled {
-		return sw.PrettyFormat(name, sort, msg, attrs)
-	} else {
-		return sw.JSONFormat(name, sort, msg, attrs)
+func (sw StandardWriter) Write(log *Log) {
+	if sw.IsEnabled(log.Package, log.Level) {
+		fmt.Fprintln(os.Stderr, sw.Format(log))
 	}
 }
 
-func (standardWriter *StandardWriter) JSONFormat(name, sort, msg string, attrs *Attrs) string {
-	(*attrs)["package"] = name
-	(*attrs)["level"] = sort
-	(*attrs)["msg"] = msg
-	(*attrs)["time"] = time.Now()
+func (sw *StandardWriter) IsEnabled(logger, level string) bool {
+	settings := sw.LoggerSettings(logger)
 
-	str, err := json.Marshal(attrs)
+	if level == "INFO" {
+		return settings.Info
+	}
+
+	if level == "ERROR" {
+		return settings.Error
+	}
+
+	if level == "TIMER" {
+		return settings.Timer
+	}
+
+	return false
+}
+
+func (sw *StandardWriter) LoggerSettings(p string) *OutputSettings {
+	if settings, ok := sw.Settings[p]; ok {
+		return settings
+	}
+
+	// If there is a "*" (Select all) setting, return that
+	if settings, ok := sw.Settings["*"]; ok {
+		return settings
+	}
+
+	return muted
+}
+
+func (sw *StandardWriter) Format(log *Log) string {
+	if sw.ColorsEnabled {
+		return sw.PrettyFormat(log)
+	} else {
+		return sw.JSONFormat(log)
+	}
+}
+
+func (sw *StandardWriter) JSONFormat(log *Log) string {
+	str, err := json.Marshal(log)
 	if err != nil {
 		return fmt.Sprintf(`{ "logger-error": "%v" }`, err)
 	}
@@ -51,12 +82,12 @@ func (standardWriter *StandardWriter) JSONFormat(name, sort, msg string, attrs *
 	return string(str)
 }
 
-func (sw *StandardWriter) PrettyFormat(name, sort, msg string, attrs *Attrs) string {
+func (sw *StandardWriter) PrettyFormat(log *Log) string {
 	return fmt.Sprintf("%s %s %s%s",
 		time.Now().Format("15:04:05.000"),
-		sw.PrettyLabel(name, sort, attrs),
-		msg,
-		sw.PrettyAttrs(attrs))
+		sw.PrettyLabel(log),
+		log.Message,
+		sw.PrettyAttrs(log.Attrs))
 }
 
 func (sw *StandardWriter) PrettyAttrs(attrs *Attrs) string {
@@ -66,36 +97,32 @@ func (sw *StandardWriter) PrettyAttrs(attrs *Attrs) string {
 
 	result := ""
 	for key, val := range *attrs {
-		if key != "elapsed_nano" {
-			result = fmt.Sprintf("%s %s=%v", result, key, val)
-		}
+		result = fmt.Sprintf("%s %s=%v", result, key, val)
 	}
 
 	return result
 }
 
-func (sw *StandardWriter) PrettyLabel(name, sort string, attrs *Attrs) string {
+func (sw *StandardWriter) PrettyLabel(log *Log) string {
 	return fmt.Sprintf("%s%s%s:%s",
-		colorFor(name),
-		name,
-		sw.PrettyLabelExt(name, sort, attrs),
+		colorFor(log.Package),
+		log.Package,
+		sw.PrettyLabelExt(log),
 		reset)
 }
 
-func (sw *StandardWriter) PrettyLabelExt(name, sort string, attrs *Attrs) string {
-	if sort == "ERROR" {
-		return fmt.Sprintf("(%s!%s)", red, colorFor(name))
+func (sw *StandardWriter) PrettyLabelExt(log *Log) string {
+	if log.Level == "ERROR" {
+		return fmt.Sprintf("(%s!%s)", red, colorFor(log.Package))
 	}
 
-	if sort == "TIMER" {
+	if log.Level == "TIMER" {
 		elapsed := "?"
-		if elapsedRaw, ok := (*attrs)["elapsed_nano"]; ok {
-			if elapsedNano, ok := elapsedRaw.(int64); ok {
-				elapsed = fmt.Sprintf("%v", time.Duration(elapsedNano))
-			}
+		if log.Elapsed > 0 {
+			elapsed = fmt.Sprintf("%v", time.Duration(log.ElapsedNano))
 		}
 
-		return fmt.Sprintf("(%s%s%s)", reset, elapsed, colorFor(name))
+		return fmt.Sprintf("(%s%s%s)", reset, elapsed, colorFor(log.Package))
 	}
 
 	return ""

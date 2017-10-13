@@ -10,18 +10,21 @@ var log = logger.New("app")
 
 type CustomWriter struct{}
 
-func (cw CustomWriter) Write(pkg, sort, msg string, attrs *logger.Attrs) {
-	fmt.Println("custom log -> ", pkg, sort, msg, attrs)
+func (cw CustomWriter) Write(log *logger.Log) {
+	fmt.Println("custom log -> ", log.Package, log.Level, log.Message, log.Attrs)
 }
 
 func main() {
 	logger.Hook(&CustomWriter{})
 	log.Info("he-yo")
 
-	log.Info("Requesting an image at foo/bar.jpg")
+	log.Info("Requesting an image", logger.Attrs{
+		"file": "foo/bar.jpg",
+	})
+
 	timer := log.Timer()
 	time.Sleep(time.Millisecond * 250)
 	timer.End("Fetched foo/bar.jpg")
 
-	log.Error("Failed to start, shutting down...")
+	log.Error("Failed, shutting down...")
 }

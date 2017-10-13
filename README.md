@@ -150,8 +150,8 @@ import (
 
 type CustomWriter struct {}
 
-func (cw CustomWriter) Write (pkg, sort, msg string, attrs *logger.Attrs) {
-  fmt.Println("custom log -> ", pkg, sort, msg, attrs)
+func (cw CustomWriter) Write (log *logger.Log) {
+  fmt.Println("custom log -> ", log.Package, log.Level, log.Message, log.Attrs)
 }
 
 func main () {
