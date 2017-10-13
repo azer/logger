@@ -9,6 +9,7 @@ Minimalistic logging library for Go.
 * [Timers for measuring performance](#timers)
 * [Structured JSON output](#structured-output)
 * [Programmatical Usage](#programmatical-usage)
+* [Hooks](#hooks)
 
 ![](https://cldup.com/CN7JhSDMwf.png)
 
@@ -160,3 +161,7 @@ func main () {
 ```
 
 See `examples/programmatical.go` for a working version of this example.
+
+## Hooks 
+
+* [Slack](https://github.com/azer/logger-slack-hook): Stream logs into a Slack channel.
