@@ -12,7 +12,7 @@ func main() {
 	timer := perf.Timer()
 	for i := 0; i < 999999; i++ {
 		t := test.Timer()
-		t.End("foobar", logger.Attrs{
+		t.End("foobar %s", "yoyo", logger.Attrs{
 			"foo": 123,
 			"bar": true,
 		})

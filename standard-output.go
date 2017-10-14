@@ -117,12 +117,7 @@ func (sw *StandardWriter) PrettyLabelExt(log *Log) string {
 	}
 
 	if log.Level == "TIMER" {
-		elapsed := "?"
-		if log.Elapsed > 0 {
-			elapsed = fmt.Sprintf("%v", time.Duration(log.ElapsedNano))
-		}
-
-		return fmt.Sprintf("(%s%s%s)", reset, elapsed, colorFor(log.Package))
+		return fmt.Sprintf("(%s%s%s)", reset, fmt.Sprintf("%v", time.Duration(log.ElapsedNano)), colorFor(log.Package))
 	}
 
 	return ""
