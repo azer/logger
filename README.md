@@ -1,6 +1,6 @@
 ## logger
 
-Minimalistic logging library for Go.
+Minimalistic logging library for Go. [Blog Post](http://azer.bike/journal/monitoring-slow-sql-queries-via-slack/)
 
 **Features:**
 
