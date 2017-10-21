@@ -28,6 +28,8 @@ type StandardWriter struct {
 	Settings      map[string]*OutputSettings
 }
 
+func (standardWriter StandardWriter) Init() {}
+
 func (sw StandardWriter) Write(log *Log) {
 	if sw.IsEnabled(log.Package, log.Level) {
 		fmt.Fprintln(os.Stderr, sw.Format(log))

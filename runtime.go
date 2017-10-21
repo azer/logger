@@ -23,6 +23,7 @@ func init() {
 }
 
 type OutputWriter interface {
+	Init()
 	Write(log *Log)
 }
 
@@ -53,6 +54,7 @@ func (runtime *Runtime) Log(log *Log) {
 
 // Add a new writer
 func Hook(writer OutputWriter) {
+	writer.Init()
 	runtime.Writers = append(runtime.Writers, writer)
 }
 
