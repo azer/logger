@@ -10,6 +10,7 @@ Minimalistic logging library for Go. [Blog Post](http://azer.bike/journal/monito
 * [Structured JSON output](#structured-output)
 * [Programmatical Usage](#programmatical-usage)
 * [Hooks](#hooks)
+* ...in production for 4 years!
 
 ![](https://cldup.com/CN7JhSDMwf.png)
 
