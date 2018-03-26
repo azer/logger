@@ -88,6 +88,12 @@ Another example; show error logs from all packages, but hide logs from `database
 $ LOG=*@error,database@mute go run example-app.go
 ```
 
+Another way to negate a package is to prefix it with "-". This is treated the same as package@mute:
+
+```bash
+$ LOG=*@error,-database go run example-app.go
+```
+
 ## Timers
 
 You can use timer logs for measuring your program. For example;

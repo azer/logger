@@ -3,11 +3,13 @@ package logger
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/azer/is-terminal"
 	"os"
 	"strings"
 	"syscall"
 	"time"
+	"unicode/utf8"
+
+	"github.com/azer/is-terminal"
 )
 
 func NewStandardOutput(file *os.File) OutputWriter {
@@ -125,7 +127,7 @@ func (sw *StandardWriter) PrettyLabelExt(log *Log) string {
 	return ""
 }
 
-// Accepts: foo,bar,qux@timer
+// Accepts: foo,bar,qux@timer,-thing
 //          *
 //          *@error
 //          *@error,database@timer
@@ -148,7 +150,14 @@ func parsePackageSettings(input string, defaultOutputSettings *OutputSettings) m
 // Accepts: users
 //          database@timer
 //          server@error
+//          -network
 func parsePackageName(input string) (string, *OutputSettings) {
+	// Treat -thing as thing@mute
+	if strings.HasPrefix(input, "-") && !strings.Contains(input, "@") {
+		_, i := utf8.DecodeRuneInString(input)
+		input = input[i:] + "@mute"
+	}
+
 	parsed := strings.Split(input, "@")
 	name := strings.TrimSpace(parsed[0])
 
