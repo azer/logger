@@ -13,10 +13,11 @@ var users = logger.New("users")
 var db = logger.New("database")
 
 func main() {
-	app.Info("Starting at %d", 9088)
-	db.Info("Connecting to mysql://azer@localhost:9900/foobar")
+	go app.Info("Starting at %d", 9088)
 
-	images.Info("Requesting an image at foo/bar.jpg")
+	go db.Info("Connecting to mysql://azer@localhost:9900/foobar")
+	go images.Info("Requesting an image at foo/bar.jpg")
+
 	timer := images.Timer()
 	time.Sleep(time.Millisecond * 250)
 	timer.End("Fetched foo/bar.jpg")

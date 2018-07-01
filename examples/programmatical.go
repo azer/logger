@@ -10,6 +10,10 @@ var log = logger.New("app")
 
 type CustomWriter struct{}
 
+func (customWriter *CustomWriter) Init() {
+
+}
+
 func (cw CustomWriter) Write(log *logger.Log) {
 	fmt.Println("custom log -> ", log.Package, log.Level, log.Message, log.Attrs)
 }
