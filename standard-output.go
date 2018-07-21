@@ -6,13 +6,12 @@ import (
 	"github.com/azer/is-terminal"
 	"os"
 	"strings"
-	"syscall"
 	"time"
 )
 
 func NewStandardOutput(file *os.File) OutputWriter {
 	var writer = StandardWriter{
-		ColorsEnabled: isterminal.IsTerminal(syscall.Stderr),
+		ColorsEnabled: isterminal.IsTerminal(int(file.Fd())),
 		Target:        file,
 	}
 
