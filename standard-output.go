@@ -32,7 +32,7 @@ func (standardWriter StandardWriter) Init() {}
 
 func (sw StandardWriter) Write(log *Log) {
 	if sw.IsEnabled(log.Package, log.Level) {
-		fmt.Fprintln(os.Stderr, sw.Format(log))
+		fmt.Fprintln(sw.Target, sw.Format(log))
 	}
 }
 
