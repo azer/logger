@@ -12,7 +12,7 @@ Minimalistic logging library for Go. [Blog Post](http://azer.bike/journal/monito
 * [Hooks](#hooks)
 * ...in production for 6 years!
 
-![](https://cldup.com/CN7JhSDMwf.png)
+![](https://cldup.com/aVZBXEhcs2.png)
 
 ## Install
 
