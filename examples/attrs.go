@@ -16,6 +16,9 @@ func main() {
 
 	err := errors.New("Too busy")
 
+	var empty error
+	empty = nil
+
 	log.Error("Failed to send e-mail. Error: %s", err, logger.Attrs{
 		"from": "foo@bar.com",
 		"to": "qux@corge.com",
@@ -29,5 +32,6 @@ func main() {
 		"frame": "purple",
 		"error": err,
 		"year": 2014,
+		"empty": empty,
 	})
 }
