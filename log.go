@@ -42,6 +42,13 @@ func SplitAttrs(v []interface{}) ([]interface{}, *Attrs) {
 		return v, nil
 	}
 
+	// Normalize error values to strings so they serialize correctly to JSON
+	for key, val := range attrs {
+		if err, ok := val.(error); ok {
+			attrs[key] = err.Error()
+		}
+	}
+
 	v = v[:len(v)-1]
 	return v, &attrs
 }

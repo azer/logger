@@ -27,6 +27,7 @@ func main() {
 		"id": 123456,
 		"model": "bmx",
 		"frame": "purple",
+		"error": err,
 		"year": 2014,
 	})
 }
